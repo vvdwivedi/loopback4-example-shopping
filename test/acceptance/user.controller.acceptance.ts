@@ -4,12 +4,14 @@
 // License text available at https://opensource.org/licenses/MIT
 
 import {Client, expect} from '@loopback/testlab';
+import {Response} from 'supertest';
 import {ShoppingApplication} from '../..';
 import {UserRepository, OrderRepository} from '../../src/repositories';
 import {MongoDataSource} from '../../src/datasources';
 import {setupApplication} from './helper';
 import {createRecommendationServer} from '../../recommender';
-import {Server} from 'http';
+import {Server, ServerResponse} from 'http';
+import {authenticate} from '@loopback/authentication';
 const recommendations = require('../../recommender/recommendations.json');
 
 describe('UserController', () => {
@@ -108,6 +110,30 @@ describe('UserController', () => {
     newUser.id = newUser.id.toString();
 
     await client.get(`/users/${newUser.id}`).expect(200, newUser.toJSON());
+  });
+
+  it.skip('returns a user with given id only when that user logins in', async () => {
+    const newUser = await userRepo.create(user);
+    const auth = {} as {token: string};
+    delete newUser.password;
+    delete newUser.orders;
+    // MongoDB returns an id object we need to convert to string
+    // since the REST API returns a string for the id property.
+    newUser.id = newUser.id.toString();
+    await client
+      .post('/Users/login')
+      .send({username: 'the-username', password: 'the-password'})
+      .expect(200)
+      .end(onResponse);
+
+    await client
+      .get(`/users/${newUser.id}`)
+      .set('Authorization', 'bearer ' + auth.token)
+      .expect(200, newUser.toJSON());
+
+    function onResponse(err: Error, res: Response) {
+      auth.token = res.body.token;
+    }
   });
 
   describe('user product recommendation (service) api', () => {

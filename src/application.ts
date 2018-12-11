@@ -10,6 +10,8 @@ import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import {MySequence} from './sequence';
 import * as path from 'path';
+import {AuthenticationBindings} from '@loopback/authentication';
+import {JWTProvider} from './providers';
 
 /**
  * Information from package.json
@@ -28,6 +30,8 @@ export class ShoppingApplication extends BootMixin(
 ) {
   constructor(options?: ApplicationConfig) {
     super(options);
+
+    this.bind(AuthenticationBindings.STRATEGY).toProvider(JWTProvider);
 
     // Bind package.json to the application context
     this.bind(PackageKey).to(pkg);

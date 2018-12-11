@@ -12,6 +12,7 @@ import {promisify} from 'util';
 import * as isemail from 'isemail';
 import {RecommenderService} from '../services/recommender.service';
 import {inject} from '@loopback/core';
+import {authenticate} from '@loopback/authentication';
 
 const hashAsync = promisify(hash);
 
@@ -59,6 +60,7 @@ export class UserController {
       },
     },
   })
+  @authenticate('jwt')
   async findById(@param.path.string('userId') userId: string): Promise<User> {
     return this.userRepository.findById(userId, {
       fields: {password: false},
