@@ -12,7 +12,9 @@ import {promisify} from 'util';
 import * as isemail from 'isemail';
 import {RecommenderService} from '../services/recommender.service';
 import {inject} from '@loopback/core';
-import {authenticate} from '@loopback/authentication';
+import {
+  authenticate,
+} from '@loopback/authentication';
 
 const hashAsync = promisify(hash);
 

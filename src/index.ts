@@ -3,16 +3,15 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import { ShoppingApplication } from './application';
-import { ApplicationConfig } from '@loopback/core';
-import { AuthenticationComponent } from '@loopback/authentication';
+import {ShoppingApplication} from './application';
+import {ApplicationConfig} from '@loopback/core';
 
-export { ShoppingApplication, PackageInfo, PackageKey } from './application';
+export {ShoppingApplication, PackageInfo, PackageKey} from './application';
 
 export async function main(options?: ApplicationConfig) {
   const app = new ShoppingApplication(options);
 
-  app.component(AuthenticationComponent);
+  // app.component(AuthenticationComponent);
 
   await app.boot();
   await app.start();

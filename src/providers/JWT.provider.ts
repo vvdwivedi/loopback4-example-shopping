@@ -1,15 +1,14 @@
-import { Provider, ValueOrPromise } from '@loopback/context';
-import * as JWT from 'jsonwebtoken';
+import {Provider, ValueOrPromise} from '@loopback/context';
 const jwt = require('jsonwebtoken');
-import { promisify } from 'util';
-import { Request } from '@loopback/rest';
+import {promisify} from 'util';
+import {Request} from '@loopback/rest';
 import {
   AuthenticateFn,
   UserProfile,
   AuthenticationMetadata,
   AuthenticationBindings,
 } from '@loopback/authentication';
-import { inject } from '@loopback/context';
+import {inject} from '@loopback/context';
 
 const signAsync = promisify(jwt.sign);
 const verifyAsync = promisify(jwt.verify);
@@ -22,7 +21,7 @@ export class JWTProvider implements Provider<AuthenticateFn | undefined> {
   constructor(
     @inject(AuthenticationBindings.METADATA)
     private metadata: AuthenticationMetadata,
-  ) { }
+  ) {}
   value(): ValueOrPromise<AuthenticateFn | undefined> {
     // NOTE: there should be a function that maps the metadata.strategy to the corresponding provider
     // the logic below shouldn't happen in the provider's value()
@@ -33,8 +32,7 @@ export class JWTProvider implements Provider<AuthenticateFn | undefined> {
     const name = this.metadata.strategy;
     if (name === 'jwt') {
       return req => this.verify(req);
-    }
-    else {
+    } else {
       return Promise.reject(`The strategy ${name} is not available.`);
     }
   }
@@ -44,8 +42,8 @@ export class JWTProvider implements Provider<AuthenticateFn | undefined> {
     // });
 
     // A mock for sign in
-    const payload = { admin: true }
-    await signAsync(payload, SECRET, { expiresInMinutes: 5 });
+    const payload = {admin: true};
+    await signAsync(payload, SECRET, {expiresInMinutes: 5});
     // const token =
     //   request.body.token ||
     //   request.query.token ||
